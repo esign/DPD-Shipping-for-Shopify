@@ -1,7 +1,7 @@
 // Start DPD Shipping plugin //
     
 var shippingMethod = 'address',
-    $drawerForm = $('.drawer form[action="/cart"]');
+    $drawerForm = $('.drawer form[action*="/cart"]');
 
 $('.drawer input[name="sw-ajax-method"]').change(function() {
   shippingMethod = $(this).val();
