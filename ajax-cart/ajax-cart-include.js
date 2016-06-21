@@ -12,7 +12,7 @@ if(drawerFormAction.indexOf('?') > 0) {
 }
 
 $('.drawer input[name="sw-ajax-method"]').change(function() {
-  shippingMethod = $(this).val();
+  shippingMethod = $(this).attr('id').replace('sw-method-', '');
 });
 
 $drawerForm.submit(function(e) {
