@@ -88,6 +88,26 @@
             {% if fulfillment.estimated_delivery_at %}
               <p>{{ email_emphasis }}</p>
             {% endif %}
+            {% if requires_shipping and shipping_address %}
+<p>They are being shipped {% if fulfillment.tracking_company %}via {{ fulfillment.tracking_company }} {% endif %}to the following address: </p>
+<p><strong>{% if attributes.dpd-method == "parcelshop" %}DPD Pickup Parcelshop{% elsif attributes.dpd-method == "store" %}Pickup location{% else %}Shipping address{% endif %}</strong><br />
+{% if attributes.dpd-method == "parcelshop" or attributes.dpd-method == "store" %}
+    {{ shipping_address.company }}<br />
+  {% else %}
+    {{ shipping_address.name }}<br />
+ {% endif %}
+  {{ shipping_address.street }}<br />
+  {{ shipping_address.city }},  {{ shipping_address.zip }}<br />
+  {{ shipping_address.province }}
+  {{ shipping_address.country }}</p>
+{% endif %}
+
+{% if fulfillment.tracking_numbers.size > 0 %}
+<p>Click the links below for shipping status on these items:<br/>
+{% for tracking_url in fulfillment.tracking_urls %} <a href="{{ tracking_url }}">{{ fulfillment.tracking_company }} link {{ forloop.index }}</a><br>{% endfor %}</p>
+{% endif %}
+
+            {% if order_status_url %}
             <table class="row actions">
   <tr>
     <td class="actions__cell">
@@ -106,8 +126,21 @@
     </td>
   </tr>
 </table>
-
-
+{% else %}
+  {% if shop.url %}
+    <table class="row actions">
+      <tr>
+        <td class="actions__cell">
+          <table class="button main-action-cell">
+            <tr>
+              <td class="button__cell"><a href="{{ shop.url }}" class="button__text">Visit our store</a></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  {% endif %}
+{% endif %}
             </td>
           </tr>
         </table>
@@ -153,7 +186,12 @@
           {% endif %}
         </td>
         <td class="order-list__product-description-cell">
-          <span class="order-list__item-title">{{ line.line_item.title }} × {{ line.line_item.quantity }}</span><br/>
+          {% if line.line_item.product.title %}
+            {% assign line_title = line.line_item.product.title %}
+          {% else %}
+            {% assign line_title = line.line_item.title %}
+          {% endif %}
+          <span class="order-list__item-title">{{ line_title }} × {{ line.line_item.quantity }}</span><br/>
           {% if line.line_item.variant.title != 'Default Title' %}
             <span class="order-list__item-variant">{{ line.line_item.variant.title }}</span>
           {% endif %}
